@@ -347,13 +347,14 @@ class Gdn_PluginManager extends Gdn_Pluggable {
 
    public function FindPluginFile($PluginPath) {
       if (!is_dir($PluginPath)) return FALSE;
-      $PluginFiles = scandir($PluginPath);
       $TestPatterns = array(
          'default.php', '*plugin.php'
       );
-      foreach ($PluginFiles as $PluginFile) {
-         foreach ($TestPatterns as $Test)
-            if (fnmatch($Test, $PluginFile)) return CombinePaths(array($PluginPath, $PluginFile));
+      foreach ($TestPatterns as $Test) {
+         $PluginFiles = glob(CombinePaths(array($PluginPath, $Test)));
+         if (!empty($PluginFiles)) {
+            return array_shift($PluginFiles);
+         }
       }
 
       return FALSE;
